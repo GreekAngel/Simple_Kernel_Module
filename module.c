@@ -7,7 +7,7 @@
 
 MODULE_LICENSE("GPL v3.0");
 MODULE_AUTHOR("Nakopoulos Stylianos");
-MODULE_DESCRIPTION("");
+MODULE_DESCRIPTION("Simple Kernel Module");
 MODULE_VERSION("1.0");
 
 int init_module(void);
@@ -18,7 +18,7 @@ static ssize_t device_read(struct file *, char *, size_t, loff_t *);
 static ssize_t device_write(struct file *, const char *, size_t, loff_t *);
 
 #define SUCCESS 0
-#define DEVICE_NAME "AbuseNT"
+#define DEVICE_NAME "module"
 #define BUF_LEN 255
 
 
@@ -40,39 +40,39 @@ static struct class *pClass;
 int init_module(void)
 {
     struct device *pDev;
-    printk(KERN_INFO "Loading AbuseNT module...\n");
+    printk(KERN_INFO "Loading module...\n");
     Major = register_chrdev(0, DEVICE_NAME, &fops);
 
     if (Major < 0) {
-        printk(KERN_ALERT "AbuseNT module load failed...\n"
+        printk(KERN_ALERT "Module load failed...\n"
                           "--> Could not register device: %d\n", Major);
         return Major;
     }
 
     devNo = MKDEV(Major, 0);
 
-    pClass = class_create(THIS_MODULE, "AbuseNT");
+    pClass = class_create(THIS_MODULE, "module");
     if (IS_ERR(pClass)) {
         printk(KERN_WARNING "\nCan not create class");
         unregister_chrdev_region(devNo, 1);
         return -1;
     }
 
-    if (IS_ERR(pDev = device_create(pClass, NULL, devNo, NULL, "AbuseNT"))) {
-        printk(KERN_WARNING "abuse.ko can not create device /dev/AbuseNT\n");
+    if (IS_ERR(pDev = device_create(pClass, NULL, devNo, NULL, "module"))) {
+        printk(KERN_WARNING "abuse.ko can not create device /dev/module\n");
         class_destroy(pClass);
         unregister_chrdev_region(devNo, 1);
         return -1;
     }
 
-    printk(KERN_INFO "AbuseNT module has been loaded: %d\n", Major);
+    printk(KERN_INFO "Module has been loaded: %d\n", Major);
 
     return SUCCESS;
 }
 
 void cleanup_module(void)
 {
-    printk(KERN_ALERT "Unloading AbuseNT module...\n");
+    printk(KERN_ALERT "Unloading module...\n");
     device_destroy(pClass, devNo);
     class_destroy(pClass);
     unregister_chrdev(Major, DEVICE_NAME);
@@ -87,13 +87,9 @@ static int device_open(struct inode *inode, struct file *file)
         return -EBUSY;
 
     Device_Open++;
-    sprintf(msg, "\nAuthor: Nakopoulos Stylianos (Kalibeg)\n"
-                 "Project: AbuseNT\n"
-                 "Version: 1.0\n"
-                 "Email: stelios.nakopoulos@gmail.com\n"
-                 "Mobile: 6946782950\n"
-                 "Used: %d\n\n"
-                 "If you need my help, just call me!\n", counter++);
+    sprintf(msg, "\nAuthor: Nakopoulos Stylianos\n"
+                 "Project: Simple Kernel Module\n"
+                 "Used: %d\n\n", counter++);
     msg_Ptr = msg;
     try_module_get(THIS_MODULE);
 
