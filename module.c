@@ -5,7 +5,7 @@
 #include <linux/device.h>
 #include <asm/uaccess.h>
 
-MODULE_LICENSE("GPL v3.0");
+MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Nakopoulos Stylianos");
 MODULE_DESCRIPTION("Simple Kernel Module");
 MODULE_VERSION("1.0");
